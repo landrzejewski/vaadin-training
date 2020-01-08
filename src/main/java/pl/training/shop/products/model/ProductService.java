@@ -51,4 +51,8 @@ public class ProductService {
         return productRepository.findById(productId);
     }
 
+    public long getProductsCount() {
+        return productRepository.count();
+    }
+
 }
