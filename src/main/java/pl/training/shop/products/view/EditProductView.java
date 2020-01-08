@@ -1,33 +1,23 @@
-package pl.training.shop.products.ui;
+package pl.training.shop.products.view;
 
-import java.util.Date;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.training.shop.products.model.Product;
-import pl.training.shop.products.model.ProductsService;
-import pl.training.shop.ui.CancelEvent;
-import pl.training.shop.ui.SaveEvent;
+import pl.training.shop.products.model.ProductService;
+import pl.training.shop.view.CancelEvent;
+import pl.training.shop.view.SaveEvent;
 
 @Route("edit-product")
-public class EditProductView extends VerticalLayout implements HasUrlParameter<Long>, AfterNavigationObserver {
+public class EditProductView extends VerticalLayout {
 	
-	private final ProductsService productsService;
+	private final ProductService productService;
 	private Long productId;
 	private ProductForm form;
 	
 	@Autowired
-	public EditProductView(ProductsService productsService) {
-		this.productsService = productsService;		
+	public EditProductView(ProductService productsService) {
+		this.productService = productsService;
 	}
 	
 	private void initProductForm() {
@@ -43,28 +33,11 @@ public class EditProductView extends VerticalLayout implements HasUrlParameter<L
 	
 	private void onProductFormSave(SaveEvent event) {
 		Product product = form.getProduct();
-		productsService.updateProduct(product);
+		//productService.updateProduct(product);
 		showProducts();
 	}
 	
 	private void showProducts() {
-		UI.getCurrent().navigate(ProductsView.class);
-	}
-
-	@Override
-	public void setParameter(BeforeEvent event, Long productId) {
-		this.productId = productId;
-	}
-
-	@Override
-	public void afterNavigation(AfterNavigationEvent event) {
-		Optional<Product> product = productsService.getProduct(productId);
-		if (product.isPresent()) {
-			form = new ProductForm(product.get(), productsService.getAllProductCategories());
-			initProductForm(); 
-		} else {
-			showProducts();
-		}
 	}
 
 }

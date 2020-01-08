@@ -1,6 +1,4 @@
-package pl.training.shop.products.ui;
-
-import java.util.List;
+package pl.training.shop.products.view;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -9,41 +7,33 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.shared.Registration;
-
 import lombok.Getter;
 import lombok.extern.java.Log;
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductCategory;
-import pl.training.shop.ui.CancelEvent;
-import pl.training.shop.ui.LocalDateToDateConverter;
-import pl.training.shop.ui.MinLengthValidator;
-import pl.training.shop.ui.SaveEvent;
+import pl.training.shop.view.CancelEvent;
+import pl.training.shop.view.SaveEvent;
+
+import java.util.List;
 
 @Log
 public class ProductForm extends FormLayout {
 
     private final TextField nameField = new TextField();
-    private final TextField descriptionField = new TextField();
+    private final TextArea descriptionField = new TextArea();
     private final TextField priceField = new TextField();
     private final DatePicker availableSinceField = new DatePicker();
-    private final TextField quantityField = new TextField();
+    private final NumberField quantityField = new NumberField();
     private final ComboBox<ProductCategory> categoryField = new ComboBox<>();
     private final HorizontalLayout buttonsLayout = new HorizontalLayout();
-
-
     private final Button cancelButton = new Button();
     private final Button saveButton = new Button();
-    private final Binder<Product> productBinder = new Binder<Product>(Product.class);
-    private final BeanValidationBinder<Product> validationBinder = new BeanValidationBinder<>(Product.class);
-    private final List<ProductCategory> productCategories;
 
+    private final List<ProductCategory> productCategories;
     @Getter
     private Product product;
 
@@ -52,9 +42,6 @@ public class ProductForm extends FormLayout {
         this.productCategories = productCategories;
         initFields();
         initButtons();
-        bindProduct();
-        productBinder.readBean(product);
-        //validationBinder.readBean(product);
     }
 
     private void initFields() {
@@ -63,9 +50,9 @@ public class ProductForm extends FormLayout {
         priceField.setLabel("Price");
         availableSinceField.setLabel("Available since");
         quantityField.setLabel("Quantity");
+        categoryField.setLabel("Category");
         categoryField.setItemLabelGenerator(ProductCategory::getName);
         categoryField.setItems(productCategories);
-        categoryField.setLabel("Category");
         add(nameField, descriptionField, priceField, availableSinceField, quantityField, categoryField);
     }
 
@@ -77,54 +64,13 @@ public class ProductForm extends FormLayout {
         buttonsLayout.add(cancelButton, saveButton);
         add(buttonsLayout);
     }
-    
-    private void bindProduct() {
-    	productBinder.forField(nameField)
-    		.asRequired("Name is required")
-    		.bind(Product::getName, Product::setName);
-    	productBinder.forField(descriptionField)
-			.asRequired("Description is required")
-			.withValidator(new MinLengthValidator(3))
-			.bind(Product::getDescription, Product::setDescription);
-    	productBinder.forField(priceField)
-			.asRequired("Price is required")
-			.withConverter(new StringToLongConverter("Invalid price"))
-			.withValidator(price -> price > 0, "Price is to low")	
-			.bind(Product::getPrice, Product::setPrice);
-    	productBinder.forField(availableSinceField)
-			.asRequired("Field is required")
-			.withConverter(new LocalDateToDateConverter())
-			.bind(Product::getAvailableSince, Product::setAvailableSince);
-    	productBinder.forField(quantityField)
-			.asRequired("Quantity is required")
-			.withConverter(new StringToIntegerConverter("Invalid quantity"))
-			.bind(Product::getQuantity, Product::setQuantity);
-    	productBinder.forField(categoryField)
-        	.asRequired("Category is required")
-        	.bind(Product::getCategory, Product::setCategory);
-    	
-    	validationBinder.forField(nameField)
-			.bind(Product::getName, Product::setName);
-    }
-    
+
 	private void onCancel(ClickEvent<Button> event) {
-		fireEvent(new CancelEvent(this));
+        fireEvent(new CancelEvent(this));
 	}
 	
 	private void onSave(ClickEvent<Button> event) {
-		//validationBinder.validate();
-		//log.info("Status: " + validationBinder.isValid());
-		try {
-			validationBinder.writeBean(product);
-		} catch (ValidationException e) {
-			log.warning(e.getMessage());
-			return;
-		}
-		
-		productBinder.writeBeanIfValid(product);
-		if (productBinder.isValid()) {
-			fireEvent(new SaveEvent(this));
-		}
+        fireEvent(new SaveEvent(this));
 	}
 	
 	public Registration addCancelListener(ComponentEventListener<CancelEvent> listener) {

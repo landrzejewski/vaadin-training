@@ -26,4 +26,16 @@ public class ProductService {
         return productCategoryRepository.saveAndFlush(productCategory);
     }
 
+    public void removeProduct(Product product) {
+        productRepository.delete(product);
+    }
+
+    public List<ProductCategory> getAllProductCategories() {
+        return productCategoryRepository.findAll();
+    }
+
+    public Product saveProduct(Product product) {
+        return productRepository.saveAndFlush(product);
+    }
+
 }

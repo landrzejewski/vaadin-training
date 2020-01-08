@@ -1,27 +1,25 @@
-package pl.training.shop.products.ui;
-
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package pl.training.shop.products.view;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.training.shop.products.model.Product;
-import pl.training.shop.products.model.ProductsService;
-import pl.training.shop.ui.CancelEvent;
-import pl.training.shop.ui.SaveEvent;
+import pl.training.shop.products.model.ProductService;
+import pl.training.shop.view.CancelEvent;
+import pl.training.shop.view.SaveEvent;
 
-@Route("new-product")
+import java.util.Date;
+
+@Route("add-product")
 public class AddProductView extends VerticalLayout {
 	
-	private final ProductsService productsService;
+	private final ProductService productService;
 	private final ProductForm form;
 	
 	@Autowired
-	public AddProductView(ProductsService productsService) {
-		this.productsService = productsService;
+	public AddProductView(ProductService productsService) {
+		this.productService = productsService;
 		Product product = new Product();
 		product.setAvailableSince(new Date());
 		form = new ProductForm(product, productsService.getAllProductCategories());
@@ -41,7 +39,7 @@ public class AddProductView extends VerticalLayout {
 	
 	private void onProductFormSave(SaveEvent event) {
 		Product product = form.getProduct();
-		productsService.updateProduct(product);
+		productService.saveProduct(product);
 		showProducts();
 	}
 	

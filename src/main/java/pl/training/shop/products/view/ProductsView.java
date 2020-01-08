@@ -1,6 +1,8 @@
 package pl.training.shop.products.view;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -30,10 +32,24 @@ public class ProductsView extends VerticalLayout {
     }
 
     private void initButtons() {
+        UI ui = UI.getCurrent();
+        addButton.addClickListener(event -> ui.navigate(AddProductView.class));
         editButton.setVisible(false);
         removeButton.setVisible(false);
+        removeButton.addClickListener(event -> onRemoveProduct());
         buttonsLayout.add(addButton, editButton, removeButton);
         add(buttonsLayout);
+    }
+
+    private void onRemoveProduct() {
+        ConfirmDialog confirmDialog = new ConfirmDialog("Warning", "Are you sure?",
+                "Yes", event -> removeSelectedProduct(), "No", event -> {});
+        confirmDialog.open();
+    }
+
+    private void removeSelectedProduct() {
+        productService.removeProduct(selectedProduct);
+        refreshProducts();
     }
 
     private void initProductsGrid() {

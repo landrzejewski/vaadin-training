@@ -23,14 +23,14 @@ public class Application extends SpringBootServletInitializer {
                 .description("Dobra, zdrowa, świeża")
                 .quantity(10)
                 .price(100)
-                .availablleSince(new Date())
+                .availableSince(new Date())
                 .build());
         productService.addProduct(Product.builder()
                 .name("Brukselka")
                 .description("Pyszna, zielona, krajowa")
                 .quantity(100)
                 .price(50)
-                .availablleSince(new Date())
+                .availableSince(new Date())
                 .build());
     }
 
