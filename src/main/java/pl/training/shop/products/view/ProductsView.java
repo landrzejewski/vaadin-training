@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.training.shop.orders.model.Order;
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductService;
 
@@ -16,18 +17,23 @@ import java.util.List;
 @Route("products")
 public class ProductsView extends VerticalLayout {
 
+    private static final int DEFAULT_QUANTITY = 1;
+
     private final ProductService productService;
     private final HorizontalLayout buttonsLayout = new HorizontalLayout();
     private Button addButton = new Button("Add");
     private Button editButton = new Button("Edit");
     private Button removeButton = new Button("Remove");
+    private final Button addToBasketButton = new Button("Add to basket");
     private final ProductsGrid productsGrid = new ProductsGrid();
 
     private Product selectedProduct;
+    private Order order;
 
     @Autowired
-    private ProductsView(ProductService productService) {
+    private ProductsView(ProductService productService, Order order) {
         this.productService = productService;
+        this.order = order;
         initButtons();
         initProductsGrid();
     }
@@ -39,7 +45,9 @@ public class ProductsView extends VerticalLayout {
         editButton.addClickListener(event -> onEditProduct());
         removeButton.setVisible(false);
         removeButton.addClickListener(event -> onRemoveProduct());
-        buttonsLayout.add(addButton, editButton, removeButton);
+        addToBasketButton.setVisible(false);
+        addToBasketButton.addClickListener(event -> onAddProductToBasket());
+        buttonsLayout.add(addButton, editButton, removeButton, addToBasketButton);
         add(buttonsLayout);
     }
 
@@ -71,11 +79,18 @@ public class ProductsView extends VerticalLayout {
         selectedProduct = product;
         editButton.setVisible(product != null);
         removeButton.setVisible(product != null);
+        addToBasketButton.setVisible(product != null && product.getQuantity() > 0);
     }
 
     private void refreshProducts() {
         List<Product> products = productService.getAllProduct();
         productsGrid.setProducts(products);
+    }
+
+    private void onAddProductToBasket() {
+        productService.decreaseQuantity(selectedProduct.getId(), DEFAULT_QUANTITY);
+        order.add(selectedProduct.getId(), DEFAULT_QUANTITY);
+        refreshProducts();
     }
 
 }

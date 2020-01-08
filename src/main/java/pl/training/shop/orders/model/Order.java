@@ -1,6 +1,7 @@
 package pl.training.shop.orders.model;
 
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 @Log
 public class Order {
 
+    @Getter
     private Map<Long, Integer> entries = new HashMap<>();
 
     public void add(Long productId, int quantity) {

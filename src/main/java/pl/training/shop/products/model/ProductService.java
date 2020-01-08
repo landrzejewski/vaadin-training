@@ -31,6 +31,14 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+    public void decreaseQuantity(Long productId, int amount) {
+        productRepository.decreaseQuantity(productId, amount);
+    }
+
+    public void increaseQuantity(Long productId, int amount) {
+        productRepository.increaseQuantity(productId, amount);
+    }
+
     public List<ProductCategory> getAllProductCategories() {
         return productCategoryRepository.findAll();
     }
