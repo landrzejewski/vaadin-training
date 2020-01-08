@@ -6,6 +6,7 @@ import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductService;
@@ -35,10 +36,18 @@ public class ProductsView extends VerticalLayout {
         UI ui = UI.getCurrent();
         addButton.addClickListener(event -> ui.navigate(AddProductView.class));
         editButton.setVisible(false);
+        editButton.addClickListener(event -> onEditProduct());
         removeButton.setVisible(false);
         removeButton.addClickListener(event -> onRemoveProduct());
         buttonsLayout.add(addButton, editButton, removeButton);
         add(buttonsLayout);
+    }
+
+    private void onEditProduct() {
+        UI ui = UI.getCurrent();
+        String productUrl = RouteConfiguration.forApplicationScope()
+                .getUrl(EditProductView.class, selectedProduct.getId());
+        ui.navigate(productUrl);
     }
 
     private void onRemoveProduct() {

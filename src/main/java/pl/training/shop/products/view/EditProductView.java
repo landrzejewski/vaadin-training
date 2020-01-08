@@ -1,15 +1,18 @@
 package pl.training.shop.products.view;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductService;
 import pl.training.shop.view.CancelEvent;
 import pl.training.shop.view.SaveEvent;
 
+import java.util.Optional;
+
 @Route("edit-product")
-public class EditProductView extends VerticalLayout {
+public class EditProductView extends VerticalLayout implements HasUrlParameter<Long>, AfterNavigationObserver {
 	
 	private final ProductService productService;
 	private Long productId;
@@ -33,11 +36,28 @@ public class EditProductView extends VerticalLayout {
 	
 	private void onProductFormSave(SaveEvent event) {
 		Product product = form.getProduct();
-		//productService.updateProduct(product);
+		productService.saveProduct(product);
 		showProducts();
 	}
 	
 	private void showProducts() {
+		UI.getCurrent().navigate(ProductsView.class);
+	}
+
+	@Override
+	public void setParameter(BeforeEvent beforeEvent, Long productId) {
+		this.productId = productId;
+	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+		Optional<Product> product = productService.getProduct(productId);
+		if (product.isPresent()) {
+			form = new ProductForm(product.get(), productService.getAllProductCategories());
+			initProductForm();
+		} else {
+			showProducts();
+		}
 	}
 
 }

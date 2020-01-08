@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -36,6 +37,10 @@ public class ProductService {
 
     public Product saveProduct(Product product) {
         return productRepository.saveAndFlush(product);
+    }
+
+    public Optional<Product> getProduct(Long productId) {
+        return productRepository.findById(productId);
     }
 
 }
