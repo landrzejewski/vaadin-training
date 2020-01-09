@@ -7,6 +7,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductCategory;
 import pl.training.shop.products.model.ProductService;
+import pl.training.shop.users.model.User;
+import pl.training.shop.users.model.UserService;
 
 import java.util.Date;
 
@@ -14,7 +16,13 @@ import java.util.Date;
 public class Application extends SpringBootServletInitializer {
 
     @Autowired
-    public Application(ProductService productService) {
+    public Application(ProductService productService, UserService userService) {
+        User user = new User();
+        user.setLogin("admin");
+        user.setPassword("123");
+        user.setEnabled(true);
+        userService.addUser(user);
+
         productService.addProductCategory(new ProductCategory("Warzywa"));
         productService.addProductCategory(new ProductCategory("Owoce"));
 
