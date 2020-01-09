@@ -1,6 +1,7 @@
 package pl.training.shop.products.model;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
 
+    //@Secured("ADMIN")
     public List<Product> getAllProduct() {
         return productRepository.findAll();
     }

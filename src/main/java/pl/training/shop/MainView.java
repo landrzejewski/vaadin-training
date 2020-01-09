@@ -13,6 +13,8 @@ import lombok.extern.java.Log;
 import pl.training.shop.orders.view.OrderView;
 import pl.training.shop.products.model.ProductService;
 import pl.training.shop.products.view.ProductsView;
+import pl.training.shop.users.model.SecurityService;
+import pl.training.shop.users.view.LoginView;
 import pl.training.shop.view.AppHello;
 
 @Push
@@ -23,10 +25,12 @@ public class MainView extends VerticalLayout implements BeforeLeaveObserver, Aft
     private final HorizontalLayout menuLayout = new HorizontalLayout();
     private final Label productsCount = new Label();
     private final ProductService productService;
+    private final SecurityService securityService;
     private Thread backgroundThread;
 
-    public MainView(ProductService productService) {
+    public MainView(ProductService productService, SecurityService securityService) {
         this.productService = productService;
+        this.securityService = securityService;
         initButtons();
         add(menuLayout);
         add(productsCount);
@@ -38,7 +42,14 @@ public class MainView extends VerticalLayout implements BeforeLeaveObserver, Aft
         productsButton.addClickListener(event -> UI.getCurrent().navigate(ProductsView.class));
         Button orderButton = new Button("Order");
         orderButton.addClickListener(event -> UI.getCurrent().navigate(OrderView.class));
-        menuLayout.add(productsButton, orderButton);
+        Button logoutButton = new Button("Logout");
+        logoutButton.addClickListener(event -> onLogout());
+        menuLayout.add(productsButton, orderButton, logoutButton);
+    }
+
+    private void onLogout() {
+        securityService.logout();
+        UI.getCurrent().navigate(LoginView.class);
     }
 
     @Override
