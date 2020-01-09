@@ -13,6 +13,7 @@ import lombok.extern.java.Log;
 import pl.training.shop.orders.view.OrderView;
 import pl.training.shop.products.model.ProductService;
 import pl.training.shop.products.view.ProductsView;
+import pl.training.shop.view.AppHello;
 
 @Push
 @Route
@@ -29,6 +30,7 @@ public class MainView extends VerticalLayout implements BeforeLeaveObserver, Aft
         initButtons();
         add(menuLayout);
         add(productsCount);
+        add(new AppHello());
     }
 
     private void initButtons() {

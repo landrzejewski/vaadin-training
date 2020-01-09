@@ -1,5 +1,6 @@
 package pl.training.shop.products.view;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.training.shop.orders.model.Order;
 import pl.training.shop.products.model.Product;
 import pl.training.shop.products.model.ProductService;
+import pl.training.shop.view.DisposableEventBus;
 
 import java.util.List;
 
@@ -29,11 +31,13 @@ public class ProductsView extends VerticalLayout {
 
     private Product selectedProduct;
     private Order order;
+    private DisposableEventBus disposableEventBus;
 
     @Autowired
-    private ProductsView(ProductService productService, Order order) {
+    private ProductsView(ProductService productService, Order order, DisposableEventBus disposableEventBus) {
         this.productService = productService;
         this.order = order;
+        this.disposableEventBus = disposableEventBus;
         initButtons();
         initProductsGrid();
     }
@@ -90,7 +94,13 @@ public class ProductsView extends VerticalLayout {
     private void onAddProductToBasket() {
         productService.decreaseQuantity(selectedProduct.getId(), DEFAULT_QUANTITY);
         order.add(selectedProduct.getId(), DEFAULT_QUANTITY);
-        refreshProducts();
+        disposableEventBus.fireEvent(new ProductQuantityChangeEvent());
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+       UI ui = attachEvent.getUI();
+       disposableEventBus.on(ProductQuantityChangeEvent.class, event -> ui.access(this::refreshProducts));
     }
 
 }
