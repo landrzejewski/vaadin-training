@@ -4,8 +4,13 @@ class AppHello extends PolymerElement {
 
     static get template() {
         return html`
+            <style>
+                .text {
+                    color: cadetblue;
+                }
+            </style>
             <vaadin-button id="hello-btn" on-click="sayHello">Say hello</vaadin-button>
-            <h2>{{name}}</h2>
+            <h2 class="text">{{name}}</h2>
         `;
     }
 
